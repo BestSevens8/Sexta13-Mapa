@@ -1,89 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sexta-Feira 13 — Mapa dos Jantares</title>
+  <meta charset="utf-8">
+  <title>Teste Mapa Sexta 13</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  ></script>
 
-  <!-- MarkerCluster (opcional, útil quando houver muitos pontos) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
-  <script defer src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    #map {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="title">Sexta-Feira 13</div>
-      <div class="subtitle">Mapa dos jantares (Portugal + ilhas)</div>
-    </div>
-    <div class="actions">
-      <input id="search" type="search" placeholder="Procurar (ex.: Porto, sushi, 2024...)" />
-      <button id="btnAll">Ver tudo</button>
-    </div>
-  </header>
 
-  <main class="layout">
-    <section id="map"></section>
-    <aside class="panel">
-      <div class="panel-header">
-        <h2>Locais</h2>
-        <div id="count" class="count"></div>
-      </div>
-      <ul id="list" class="list"></ul>
-      <footer class="footnote">
-        <span>Toque num local para focar o mapa e ver fotos.</span>
-      </footer>
-    </aside>
-  </main>
+<div id="map"></div>
 
-  <script>
-    window.addEventListener("DOMContentLoaded", async () => {
-      // 1) Mapa
-      const map = L.map('map', { scrollWheelZoom: true });
+<script>
+  const map = L.map('map').setView([39.5, -8.0], 6);
 
-      // Base map (OpenStreetMap)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap'
-      }).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
 
-      // Vista inicial a apanhar continente + ilhas (aprox.)
-      const portugalAllBounds = L.latLngBounds(
-        L.latLng(30.0, -31.6), // SW (Açores)
-        L.latLng(43.9,  -6.0)  // NE (norte PT)
-      );
-      map.fitBounds(portugalAllBounds, { padding: [20, 20] });
+  L.marker([38.7223, -9.1393])
+    .addTo(map)
+    .bindPopup('Lisboa')
+    .openPopup();
+</script>
 
-      // 2) Layer de marcadores (com cluster se disponível)
-      const useCluster = !!L.markerClusterGroup;
-      const markersLayer = useCluster ? L.markerClusterGroup() : L.layerGroup();
-      markersLayer.addTo(map);
-
-      // 3) DOM refs
-      const listEl = document.getElementById("list");
-      const searchEl = document.getElementById("search");
-      const countEl = document.getElementById("count");
-      const btnAll = document.getElementById("btnAll");
-
-      // 4) Helpers
-      const rows = []; // { item, marker, li }
-
-      function escapeHtml(s) {
-        return String(s ?? "")
-          .replaceAll("&","&amp;").replaceAll("<","&lt;")
-          .replaceAll(">","&gt;").replaceAll('"',"&quot;")
-          .replaceAll("'","&#039;");
-      }
-
-      function popupHtml(item) {
-        const title = `<div class="pop-title">${escapeHtml(item.nome || "Local")}</div>`;
-        const meta = `
-          <div class="pop-meta">
-            ${item.data ? `<div><strong>Data:</strong> ${escapeHtml(item.data)}</div>` : ""}
-            ${item.cidade ? `<div><s
+</body>
+</html>
