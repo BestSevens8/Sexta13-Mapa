@@ -45,6 +45,12 @@
 
   // Ajusta a vista inicial exatamente aos limites
   map.fitBounds(portugalBounds);
+  // PIN de teste: O Sardinha (Peniche)
+L.marker([39.3558, -9.3811])
+  .addTo(map)
+  .bindPopup("<b>O Sardinha</b><br>Peniche")
+  .openPopup();
+
 </script>
 
 </body>
