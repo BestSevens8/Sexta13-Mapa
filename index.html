@@ -45,14 +45,10 @@
 
   // Ajusta a vista inicial exatamente aos limites
   map.fitBounds(portugalBounds);
-// PIN de teste: Reinaldes (centro correto)
+// PIN: Reinaldes
 L.marker([39.338847, -9.328660])
   .addTo(map)
-  .bindPopup("<b>Reinaldes</b><br>Atouguia da Baleia · Peniche")
-  .openPopup();
-
-// Focar o mapa no centro de Reinaldes
-map.setView([39.338847, -9.328660], 14);
+  .bindPopup("<b>Reinaldes</b><br>Atouguia da Baleia · Peniche");
 
 
 
