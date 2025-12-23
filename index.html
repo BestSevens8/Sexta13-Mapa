@@ -9,35 +9,43 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    html, body { height: 100%; margin: 0; }
-    #map { height: 100%; width: 100%; }
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    #map {
+      height: 100%;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
-  <div id="map"></div>
 
-  <script>
-    // Cria mapa
-    const map = L.map('map', { scrollWheelZoom: true });
+<div id="map"></div>
 
-    // Base map
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap'
-    }).addTo(map);
+<script>
+  // Limites de Portugal + Açores + Madeira
+  const portugalBounds = L.latLngBounds(
+    [30.0, -31.8], // Sudoeste (Açores)
+    [43.9,  -6.0]  // Nordeste (Norte PT)
+  );
 
-    // Limites aproximados para Portugal + Açores + Madeira
-    const portugalAllBounds = L.latLngBounds(
-      L.latLng(30.0, -31.7), // SW (Açores)
-      L.latLng(43.9,  -6.0)  // NE (Norte de PT)
-    );
+  // Criação do mapa COM limites
+  const map = L.map('map', {
+    maxBounds: portugalBounds,
+    maxBoundsViscosity: 1.0, // impede sair completamente
+    minZoom: 5,              // 🔑 impede zoom out para o mundo
+    maxZoom: 18
+  });
 
-    // Faz zoom para mostrar tudo
-    map.fitBounds(portugalAllBounds, { padding: [20, 20] });
+  // Mapa base
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
 
-    // Opcional: evita que a pessoa "fugir" demasiado para fora (podes desligar se não quiseres)
-    map.setMaxBounds(portugalAllBounds.pad(0.35));
-    map.on('drag', function () { map.panInsideBounds(map.getMaxBounds(), { animate: false }); });
-  </script>
+  // Ajusta a vista inicial exatamente aos limites
+  map.fitBounds(portugalBounds);
+</script>
+
 </body>
 </html>
