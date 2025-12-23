@@ -1,0 +1,26 @@
+[
+  {
+    "nome": "Restaurante Exemplo",
+    "cidade": "Lisboa",
+    "data": "2024-09-13",
+    "lat": 38.7223,
+    "lng": -9.1393,
+    "mapsUrl": "https://maps.google.com/?q=38.7223,-9.1393",
+    "siteUrl": "",
+    "notas": "Primeiro jantar oficial do grupo.",
+    "fotos": [
+      "https://example.com/foto1.jpg",
+      "https://example.com/foto2.jpg"
+    ]
+  },
+  {
+    "nome": "Churrasqueira Qualquer",
+    "cidade": "Funchal",
+    "data": "2025-06-13",
+    "lat": 32.6669,
+    "lng": -16.9241,
+    "mapsUrl": "https://maps.google.com/?q=32.6669,-16.9241",
+    "notas": "Madeira ✅",
+    "fotos": []
+  }
+]
