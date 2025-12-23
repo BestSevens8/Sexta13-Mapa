@@ -45,10 +45,10 @@
 
   // Ajusta a vista inicial exatamente aos limites
   map.fitBounds(portugalBounds);
-// PIN: Reinaldes (Google Maps)
-L.marker([39.3278539, -9.3003442])
-  .addTo(map)
-  .bindPopup("<b>Reinaldes</b><br>Atouguia da Baleia · Peniche");
+const reinaldes = L.marker([39.3278539, -9.3003442]).addTo(map);
+reinaldes.bindPopup("<b>Reinaldes</b><br>Atouguia da Baleia · Peniche");
+reinaldes.openPopup();
+
 
 
 
