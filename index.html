@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="pt">
 <head>
@@ -9,10 +8,6 @@
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- Fullscreen (opcional) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@2.4.0/Control.FullScreen.css" />
-  <script defer src="https://unpkg.com/leaflet.fullscreen@2.4.0/Control.FullScreen.js"></script>
 
   <!-- MarkerCluster (opcional, útil quando houver muitos pontos) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
@@ -48,8 +43,8 @@
   </main>
 
   <script>
-    // Espera pelos scripts defer
     window.addEventListener("DOMContentLoaded", async () => {
+      // 1) Mapa
       const map = L.map('map', { scrollWheelZoom: true });
 
       // Base map (OpenStreetMap)
@@ -58,11 +53,6 @@
         attribution: '&copy; OpenStreetMap'
       }).addTo(map);
 
-      // Fullscreen (se o plugin carregar)
-      if (L.control && L.control.fullscreen) {
-        map.addControl(new L.Control.Fullscreen({ position: 'topleft' }));
-      }
-
       // Vista inicial a apanhar continente + ilhas (aprox.)
       const portugalAllBounds = L.latLngBounds(
         L.latLng(30.0, -31.6), // SW (Açores)
@@ -70,22 +60,18 @@
       );
       map.fitBounds(portugalAllBounds, { padding: [20, 20] });
 
-      // Layer de marcadores (com cluster se disponível)
+      // 2) Layer de marcadores (com cluster se disponível)
       const useCluster = !!L.markerClusterGroup;
       const markersLayer = useCluster ? L.markerClusterGroup() : L.layerGroup();
       markersLayer.addTo(map);
 
-      // Carrega dados
-      const resp = await fetch('jantares.json', { cache: "no-store" });
-      const data = await resp.json();
-
-      // DOM refs
+      // 3) DOM refs
       const listEl = document.getElementById("list");
       const searchEl = document.getElementById("search");
       const countEl = document.getElementById("count");
       const btnAll = document.getElementById("btnAll");
 
-      // Guardar refs para filtrar/selecionar
+      // 4) Helpers
       const rows = []; // { item, marker, li }
 
       function escapeHtml(s) {
@@ -100,98 +86,4 @@
         const meta = `
           <div class="pop-meta">
             ${item.data ? `<div><strong>Data:</strong> ${escapeHtml(item.data)}</div>` : ""}
-            ${item.cidade ? `<div><strong>Cidade:</strong> ${escapeHtml(item.cidade)}</div>` : ""}
-            ${item.notas ? `<div class="pop-notes">${escapeHtml(item.notas)}</div>` : ""}
-          </div>
-        `;
-
-        const links = `
-          <div class="pop-links">
-            ${item.mapsUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(item.mapsUrl)}">Abrir no Google Maps</a>` : ""}
-            ${item.siteUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(item.siteUrl)}">Website</a>` : ""}
-          </div>
-        `;
-
-        const photos = Array.isArray(item.fotos) ? item.fotos : [];
-        const gallery = photos.length ? `
-          <div class="pop-gallery">
-            ${photos.slice(0, 8).map((u, idx) => `
-              <a class="thumb" href="${escapeHtml(u)}" target="_blank" rel="noopener" title="Foto ${idx+1}">
-                <img loading="lazy" src="${escapeHtml(u)}" alt="Foto ${idx+1}" />
-              </a>
-            `).join("")}
-          </div>
-          <div class="pop-hint">Dica: toque numa foto para abrir em tamanho maior.</div>
-        ` : `<div class="pop-hint">Sem fotos ainda.</div>`;
-
-        return `<div class="popup">${title}${meta}${links}${gallery}</div>`;
-      }
-
-      function addItem(item) {
-        // item.lat, item.lng obrigatórios
-        const marker = L.marker([item.lat, item.lng]);
-        marker.bindPopup(popupHtml(item), { maxWidth: 320 });
-
-        markersLayer.addLayer(marker);
-
-        const li = document.createElement("li");
-        li.className = "row";
-        li.innerHTML = `
-          <div class="row-title">${escapeHtml(item.nome || "Local")}</div>
-          <div class="row-sub">
-            ${item.cidade ? escapeHtml(item.cidade) : ""}
-            ${item.data ? ` • ${escapeHtml(item.data)}` : ""}
-          </div>
-        `;
-        li.addEventListener("click", () => {
-          map.setView([item.lat, item.lng], Math.max(map.getZoom(), 13), { animate: true });
-          marker.openPopup();
-        });
-
-        listEl.appendChild(li);
-        rows.push({ item, marker, li });
-      }
-
-      data.forEach(addItem);
-
-      function applyFilter(q) {
-        const query = q.trim().toLowerCase();
-        let visible = 0;
-
-        // limpa layer
-        markersLayer.clearLayers();
-        listEl.innerHTML = "";
-
-        rows.forEach(r => {
-          const hay = [
-            r.item.nome, r.item.cidade, r.item.data, r.item.notas
-          ].filter(Boolean).join(" ").toLowerCase();
-
-          const ok = !query || hay.includes(query);
-          if (ok) {
-            visible++;
-            // re-adiciona marker e linha
-            if (useCluster) markersLayer.addLayer(r.marker);
-            else r.marker.addTo(markersLayer);
-
-            listEl.appendChild(r.li);
-          }
-        });
-
-        countEl.textContent = `${visible} / ${rows.length}`;
-      }
-
-      searchEl.addEventListener("input", (e) => applyFilter(e.target.value));
-
-      btnAll.addEventListener("click", () => {
-        searchEl.value = "";
-        applyFilter("");
-        map.fitBounds(portugalAllBounds, { padding: [20, 20] });
-      });
-
-      // inicializa contador
-      applyFilter("");
-    });
-  </script>
-</body>
-</html>
+            ${item.cidade ? `<div><s
