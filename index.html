@@ -45,11 +45,15 @@
 
   // Ajusta a vista inicial exatamente aos limites
   map.fitBounds(portugalBounds);
-// PIN de teste: Reinaldes (Peniche)
-L.marker([39.3610, -9.3756])
+// PIN de teste: Reinaldes (centro)
+L.marker([39.3602, -9.3466])
   .addTo(map)
   .bindPopup("<b>Reinaldes</b><br>Peniche")
   .openPopup();
+
+// Focar o mapa em Reinaldes
+map.setView([39.3602, -9.3466], 14);
+
 
 
 </script>
