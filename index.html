@@ -2,45 +2,42 @@
 <html lang="pt">
 <head>
   <meta charset="utf-8">
-  <title>Teste Mapa Sexta 13</title>
+  <title>Sexta-Feira 13 — Mapa</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  ></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
-    #map {
-      height: 100%;
-      width: 100%;
-    }
+    html, body { height: 100%; margin: 0; }
+    #map { height: 100%; width: 100%; }
   </style>
 </head>
 <body>
+  <div id="map"></div>
 
-<div id="map"></div>
+  <script>
+    // Cria mapa
+    const map = L.map('map', { scrollWheelZoom: true });
 
-<script>
-  const map = L.map('map').setView([39.5, -8.0], 6);
+    // Base map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
+    // Limites aproximados para Portugal + Açores + Madeira
+    const portugalAllBounds = L.latLngBounds(
+      L.latLng(30.0, -31.7), // SW (Açores)
+      L.latLng(43.9,  -6.0)  // NE (Norte de PT)
+    );
 
-  L.marker([38.7223, -9.1393])
-    .addTo(map)
-    .bindPopup('Lisboa')
-    .openPopup();
-</script>
+    // Faz zoom para mostrar tudo
+    map.fitBounds(portugalAllBounds, { padding: [20, 20] });
 
+    // Opcional: evita que a pessoa "fugir" demasiado para fora (podes desligar se não quiseres)
+    map.setMaxBounds(portugalAllBounds.pad(0.35));
+    map.on('drag', function () { map.panInsideBounds(map.getMaxBounds(), { animate: false }); });
+  </script>
 </body>
 </html>
