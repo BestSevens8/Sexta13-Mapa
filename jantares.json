@@ -1,26 +1,21 @@
 [
   {
-    "nome": "Restaurante Exemplo",
-    "cidade": "Lisboa",
-    "data": "2024-09-13",
-    "lat": 38.7223,
-    "lng": -9.1393,
-    "mapsUrl": "https://maps.google.com/?q=38.7223,-9.1393",
-    "siteUrl": "",
-    "notas": "Primeiro jantar oficial do grupo.",
-    "fotos": [
-      "https://example.com/foto1.jpg",
-      "https://example.com/foto2.jpg"
-    ]
-  },
-  {
-    "nome": "Churrasqueira Qualquer",
-    "cidade": "Funchal",
-    "data": "2025-06-13",
-    "lat": 32.6669,
-    "lng": -16.9241,
-    "mapsUrl": "https://maps.google.com/?q=32.6669,-16.9241",
-    "notas": "Madeira ✅",
-    "fotos": []
+    "data": "2000-01-13",
+    "cidade": "Reinaldes",
+    "concelho": "Peniche",
+    "distrito": "Leiria",
+    "restaurante": "—",
+    "morada": "—",
+    "lat": 39.3278539,
+    "lng": -9.3003442,
+    "mapsUrl": "https://maps.app.goo.gl/hf9XjiHmmPxg3dkH7",
+    "pessoas": ["—"],
+    "avaliacao": {
+      "comida": 0,
+      "ambiente": 0,
+      "experiencia": 0
+    },
+    "fotos": [],
+    "notas": ""
   }
 ]
