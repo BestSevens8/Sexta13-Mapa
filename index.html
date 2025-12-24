@@ -1,60 +1,358 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt">
 <head>
-  <meta charset="utf-8">
-  <title>Sexta-Feira 13 — Mapa</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sexta-Feira 13 — Mapa dos Jantares</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
+    :root{
+      --bg:#0b0c10;
+      --panel:#11131a;
+      --card:#0f1118;
+      --border:rgba(255,255,255,.10);
+      --text:#eaeaea;
+      --muted:rgba(255,255,255,.70);
+      --accent:#d32f2f;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
-    #map {
-      height: 100%;
-      width: 100%;
+    *{ box-sizing:border-box; }
+    body{ margin:0; background:var(--bg); color:var(--text); }
+
+    header{
+      padding:14px 14px;
+      background:var(--panel);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .title{ font-weight:900; letter-spacing:.2px; }
+    .subtitle{ font-size:12px; color:var(--muted); margin-top:2px; }
+    .left{ display:flex; flex-direction:column; }
+    .right{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+    a.btn, button.btn{
+      appearance:none; border:none; cursor:pointer; text-decoration:none;
+      padding:10px 12px; border-radius:12px;
+      background:rgba(255,255,255,.10); color:var(--text);
+      border:1px solid var(--border);
+      font-weight:800; font-size:13px;
+    }
+    a.btn:hover, button.btn:hover{ background:rgba(255,255,255,.14); }
+
+    main{
+      height: calc(100vh - 62px);
+      display:grid;
+      grid-template-columns: 1fr 360px;
+    }
+    #map{ height:100%; width:100%; }
+
+    aside{
+      border-left:1px solid rgba(255,255,255,.08);
+      background:var(--card);
+      display:flex;
+      flex-direction:column;
+      min-width: 280px;
+    }
+    .aside-header{
+      padding:12px;
+      display:flex; justify-content:space-between; align-items:flex-end; gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .aside-header h2{ margin:0; font-size:13px; opacity:.9; }
+    .count{ font-size:12px; color:var(--muted); }
+
+    .search{
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .search input{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+    }
+
+    .list{
+      list-style:none;
+      margin:0;
+      padding:10px;
+      overflow:auto;
+      flex:1;
+    }
+    .row{
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.05);
+      margin-bottom:8px;
+      cursor:pointer;
+    }
+    .row:hover{ background:rgba(255,255,255,.08); }
+    .row-top{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .row-title{ font-weight:900; font-size:13px; }
+    .row-sub{ margin-top:4px; font-size:12px; color:var(--muted); line-height:1.25; }
+    .badge{
+      background:var(--accent);
+      color:#fff;
+      font-weight:900;
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      flex:0 0 auto;
+    }
+
+    .foot{
+      padding:10px 12px;
+      font-size:12px;
+      color:var(--muted);
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+
+    /* Pin numerado */
+    .pin-number div{
+      background: var(--accent);
+      color:#fff;
+      font-weight:900;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      text-align:center;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,.45);
+    }
+
+    /* Popup */
+    .popup{ color:#111; }
+    .popup h3{ margin:0 0 6px; font-size:14px; }
+    .popup .meta{ font-size:12px; margin:0 0 8px; }
+    .popup .meta div{ margin:2px 0; }
+    .popup a{ font-size:12px; }
+
+    @media (max-width: 950px){
+      main{ grid-template-columns: 1fr; grid-template-rows: 1fr 42vh; }
+      aside{ border-left:none; border-top:1px solid rgba(255,255,255,.08); }
     }
   </style>
 </head>
-<body>
 
-<div id="map"></div>
+<body>
+<header>
+  <div class="left">
+    <div class="title">Sexta-Feira 13</div>
+    <div class="subtitle">Mapa + lista ordenada (numeração automática por data)</div>
+  </div>
+  <div class="right">
+    <a class="btn" href="./editor.html">+ Novo Jantar (Editor)</a>
+    <button class="btn" id="btnAll">Ver Portugal + ilhas</button>
+  </div>
+</header>
+
+<main>
+  <div id="map"></div>
+  <aside>
+    <div class="aside-header">
+      <h2>Jantares</h2>
+      <div class="count" id="count">—</div>
+    </div>
+    <div class="search">
+      <input id="search" type="search" placeholder="Procurar: cidade, restaurante, ano..." />
+    </div>
+    <ul class="list" id="list"></ul>
+    <div class="foot">
+      Dica: clica numa linha para focar o pin. A numeração é pela data (desde 2000).
+    </div>
+  </aside>
+</main>
 
 <script>
-  // Limites de Portugal + Açores + Madeira
+  const $ = (id) => document.getElementById(id);
+
+  function escapeHtml(s) {
+    return String(s ?? "")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;")
+      .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function parseDateISO(s){
+    // espera AAAA-MM-DD
+    const t = Date.parse(s);
+    return Number.isFinite(t) ? t : null;
+  }
+
+  function fmtDatePT(iso){
+    // iso: AAAA-MM-DD
+    const [y,m,d] = String(iso).split("-");
+    if(!y || !m || !d) return iso;
+    return `${d}/${m}/${y}`;
+  }
+
+  // Bounds: Portugal + Açores + Madeira (para “Ver tudo”)
   const portugalBounds = L.latLngBounds(
-    [30.0, -31.8], // Sudoeste (Açores)
-    [43.9,  -6.0]  // Nordeste (Norte PT)
+    [31.0, -31.7], // Açores
+    [43.2,  -7.0]  // Norte PT
   );
 
-  // Criação do mapa COM limites
   const map = L.map('map', {
     maxBounds: portugalBounds,
-    maxBoundsViscosity: 1.0, // impede sair completamente
-    minZoom: 5,              // 🔑 impede zoom out para o mundo
+    maxBoundsViscosity: 1.0,
+    minZoom: 6,
     maxZoom: 18
   });
 
-  // Mapa base
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
   }).addTo(map);
 
-  // Ajusta a vista inicial exatamente aos limites
-  map.fitBounds(portugalBounds);
-const reinaldes = L.marker([39.3278539, -9.3003442]).addTo(map);
-reinaldes.bindPopup("<b>Reinaldes</b><br>Atouguia da Baleia · Peniche");
-reinaldes.openPopup();
+  map.fitBounds(portugalBounds, { padding: [20,20] });
 
+  const listEl = $("list");
+  const countEl = $("count");
+  const searchEl = $("search");
+  const btnAll = $("btnAll");
 
+  let entries = [];  // dados + numeração
+  let markers = [];  // { entry, marker, li }
 
+  function makeNumberIcon(n){
+    return L.divIcon({
+      className: "pin-number",
+      html: `<div>${n}</div>`,
+      iconSize: [30, 30],
+      iconAnchor: [15, 30]
+    });
+  }
 
+  function popupHtml(e){
+    const lines = [];
+    lines.push(`<div class="popup">`);
+    lines.push(`<h3>Jantar #${e.numero} — ${escapeHtml(e.cidade || "Local")}</h3>`);
+    lines.push(`<div class="meta">`);
+    if(e.data) lines.push(`<div><b>Data:</b> ${escapeHtml(fmtDatePT(e.data))}</div>`);
+    if(e.restaurante && e.restaurante !== "—") lines.push(`<div><b>Restaurante:</b> ${escapeHtml(e.restaurante)}</div>`);
+    if(e.morada && e.morada !== "—") lines.push(`<div><b>Morada:</b> ${escapeHtml(e.morada)}</div>`);
+    const loc = [e.concelho, e.distrito].filter(x => x && x !== "—").join(" · ");
+    if(loc) lines.push(`<div><b>Zona:</b> ${escapeHtml(loc)}</div>`);
+    lines.push(`</div>`);
 
+    const a = e.avaliacao || {};
+    const hasStars = (a.comida||0) + (a.ambiente||0) + (a.experiencia||0) > 0;
+    if(hasStars){
+      lines.push(`<div class="meta">`);
+      lines.push(`<div><b>⭐ Comida:</b> ${a.comida||0} &nbsp; <b>⭐ Ambiente:</b> ${a.ambiente||0} &nbsp; <b>⭐ Experiência:</b> ${a.experiencia||0}</div>`);
+      lines.push(`</div>`);
+    }
 
+    if(e.mapsUrl){
+      lines.push(`<div><a target="_blank" rel="noopener" href="${escapeHtml(e.mapsUrl)}">Abrir no Google Maps</a></div>`);
+    }
+    if(e.notas){
+      lines.push(`<div class="meta" style="margin-top:8px;"><b>Notas:</b> ${escapeHtml(e.notas)}</div>`);
+    }
+    lines.push(`</div>`);
+    return lines.join("");
+  }
+
+  function rowText(e){
+    const parts = [];
+    parts.push(`#${e.numero} • ${e.cidade || "Local"}`);
+    if(e.data) parts.push(fmtDatePT(e.data));
+    if(e.restaurante && e.restaurante !== "—") parts.push(e.restaurante);
+    return parts.join(" — ");
+  }
+
+  function render(filtered){
+    // limpar
+    listEl.innerHTML = "";
+    markers.forEach(m => map.removeLayer(m.marker));
+    markers = [];
+
+    filtered.forEach(e => {
+      const marker = L.marker([e.lat, e.lng], { icon: makeNumberIcon(e.numero) }).addTo(map);
+      marker.bindPopup(popupHtml(e), { maxWidth: 340 });
+
+      const li = document.createElement("li");
+      li.className = "row";
+      li.innerHTML = `
+        <div class="row-top">
+          <div class="row-title">${escapeHtml(e.cidade || "Local")}</div>
+          <div class="badge">#${e.numero}</div>
+        </div>
+        <div class="row-sub">
+          ${e.data ? escapeHtml(fmtDatePT(e.data)) : ""}
+          ${e.restaurante && e.restaurante !== "—" ? ` • ${escapeHtml(e.restaurante)}` : ""}
+        </div>
+      `;
+      li.addEventListener("click", () => {
+        map.setView([e.lat, e.lng], Math.max(map.getZoom(), 13), { animate:true });
+        marker.openPopup();
+      });
+
+      listEl.appendChild(li);
+      markers.push({ entry:e, marker, li });
+    });
+
+    countEl.textContent = `${filtered.length} jantar(es)`;
+  }
+
+  function applyFilter(){
+    const q = searchEl.value.trim().toLowerCase();
+    if(!q){
+      render(entries);
+      return;
+    }
+    const filtered = entries.filter(e => {
+      const hay = [
+        e.data, e.cidade, e.concelho, e.distrito, e.restaurante, e.morada,
+        (e.pessoas||[]).join(" "),
+        e.notas
+      ].filter(Boolean).join(" ").toLowerCase();
+      return hay.includes(q) || rowText(e).toLowerCase().includes(q);
+    });
+    render(filtered);
+  }
+
+  async function load(){
+    let data = [];
+    try{
+      const resp = await fetch("jantares.json", { cache: "no-store" });
+      if(!resp.ok) throw new Error(`Falha a carregar jantares.json (${resp.status})`);
+      data = await resp.json();
+      if(!Array.isArray(data)) throw new Error("jantares.json não é um array");
+    }catch(err){
+      console.error(err);
+      countEl.textContent = "Erro a ler jantares.json";
+      return;
+    }
+
+    // validar + ordenar por data (cronológico)
+    const cleaned = data
+      .map((e, idx) => ({...e, _idx: idx, _t: parseDateISO(e.data) }))
+      .filter(e =>
+        Number.isFinite(e.lat) && Number.isFinite(e.lng) && (e._t !== null)
+      )
+      .sort((a,b) => a._t - b._t || a._idx - b._idx)
+      .map((e, i) => ({...e, numero: i+1}));
+
+    entries = cleaned;
+
+    render(entries);
+  }
+
+  searchEl.addEventListener("input", applyFilter);
+  btnAll.addEventListener("click", () => {
+    map.fitBounds(portugalBounds, { padding:[20,20] });
+  });
+
+  load();
 </script>
-
 </body>
 </html>
