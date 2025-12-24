@@ -441,36 +441,62 @@
   }
 
   function renderGallery(){
-    galleryEl.innerHTML = "";
-    const photos = [];
-    entries.forEach(e => {
-      (Array.isArray(e.fotos) ? e.fotos : []).forEach(url => {
-        if(url && typeof url === "string"){
-          photos.push({ url, caption: `#${e.numero} • ${e.cidade || "Local"} • ${e.data ? fmtDatePT(e.data) : ""}`.trim(), entry: e });
-        }
-      });
-    });
+  galleryEl.innerHTML = "";
+  const photos = [];
 
-    if(!photos.length){
-      galleryEmpty.style.display = "block";
-      return;
-    }
-    galleryEmpty.style.display = "none";
-
-    photos.forEach(p => {
-      const card = document.createElement("div");
-      card.className = "photo";
-      card.innerHTML = `
-        <img loading="lazy" src="${escapeHtml(p.url)}" alt="Foto" />
-        <div class="cap">${escapeHtml(p.caption)}</div>
-      `;
-      card.addEventListener("click", () => {
-        // abre foto numa aba e também permite ir ao jantar no mapa
-        window.open(p.url, "_blank", "noopener");
-      });
-      galleryEl.appendChild(card);
+  entries.forEach(e => {
+    (Array.isArray(e.fotos) ? e.fotos : []).forEach(url => {
+      if(url && typeof url === "string"){
+        photos.push({
+          url,
+          caption: `#${e.numero} • ${e.cidade || "Local"} • ${e.data ? fmtDatePT(e.data) : ""}`.trim(),
+          entry: e
+        });
+      }
     });
+  });
+
+  if(!photos.length){
+    galleryEmpty.style.display = "block";
+    return;
   }
+  galleryEmpty.style.display = "none";
+
+  photos.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "photo";
+    card.innerHTML = `
+      <img loading="lazy" src="${escapeHtml(p.url)}" alt="Foto" />
+      <div class="cap">
+        ${escapeHtml(p.caption)}
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <a class="btn" style="padding:8px 10px; border-radius:12px; display:inline-block;"
+             target="_blank" rel="noopener" href="${escapeHtml(p.url)}">
+             Abrir foto
+          </a>
+
+          <button class="btn"
+            style="padding:8px 10px; border-radius:12px;"
+            data-jantar="${p.entry.numero}">
+            Ir para o jantar #${p.entry.numero}
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Botão "Ir para o jantar"
+    card.querySelector('button[data-jantar]').addEventListener("click", () => {
+      setTab("mapView");
+      // Pequeno delay para o Leaflet reajustar o tamanho
+      setTimeout(() => {
+        focusEntry(p.entry, true);
+      }, 80);
+    });
+
+    galleryEl.appendChild(card);
+  });
+}
+
 
   function renderTimeline(){
     timelineEl.innerHTML = "";
