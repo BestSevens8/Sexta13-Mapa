@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sexta-Feira 13 — Editor de Jantar</title>
+
+  <style>
+    :root{
+      --bg:#0b0c10;
+      --panel:#11131a;
+      --card:#0f1118;
+      --border:rgba(255,255,255,.10);
+      --text:#eaeaea;
+      --muted:rgba(255,255,255,.70);
+      --accent:#d32f2f;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; background:var(--bg); color:var(--text); }
+    header{
+      padding:14px 14px;
+      background:var(--panel);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .title{ font-weight:800; letter-spacing:.2px; }
+    .subtitle{ font-size:12px; color:var(--muted); margin-top:2px; }
+    .left{ display:flex; flex-direction:column; }
+    .right{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    a.btn, button.btn{
+      appearance:none; border:none; cursor:pointer; text-decoration:none;
+      padding:10px 12px; border-radius:12px;
+      background:rgba(255,255,255,.10); color:var(--text);
+      border:1px solid var(--border);
+      font-weight:700; font-size:13px;
+    }
+    a.btn:hover, button.btn:hover{ background:rgba(255,255,255,.14); }
+    .btn-accent{
+      background:var(--accent); border-color:rgba(0,0,0,.0);
+    }
+    .btn-accent:hover{ filter:brightness(1.05); }
+
+    main{
+      max-width:1050px;
+      margin:0 auto;
+      padding:16px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    label{ display:block; font-size:12px; color:var(--muted); margin:0 0 6px; }
+    input, textarea, select{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+    }
+    textarea{ min-height: 92px; resize: vertical; }
+    .hint{ font-size:12px; color:var(--muted); margin-top:6px; }
+    .row-actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .ok{ color:#7CFC98; font-size:12px; }
+    .err{ color:#ff7b7b; font-size:12px; }
+    .pill{
+      display:inline-block; padding:6px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--muted); font-size:12px;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="left">
+    <div class="title">Editor de Jantar — Sexta-Feira 13</div>
+    <div class="subtitle">Preenche, clica em “Gerar JSON”, e cola no <span class="mono">jantares.json</span></div>
+  </div>
+  <div class="right">
+    <a class="btn" href="./">Ver Mapa</a>
+    <span class="pill">Formato: AAAA-MM-DD</span>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <div class="grid">
+      <div>
+        <label>Data (obrigatório)</label>
+        <input id="data" type="date" />
+      </div>
+
+      <div>
+        <label>Cidade / Local (obrigatório)</label>
+        <input id="cidade" type="text" placeholder="Ex.: Reinaldes" />
+      </div>
+
+      <div>
+        <label>Concelho</label>
+        <input id="concelho" type="text" placeholder="Ex.: Peniche" />
+      </div>
+
+      <div>
+        <label>Distrito</label>
+        <input id="distrito" type="text" placeholder="Ex.: Leiria" />
+      </div>
+
+      <div>
+        <label>Restaurante</label>
+        <input id="restaurante" type="text" placeholder="Ex.: Café Martins" />
+      </div>
+
+      <div>
+        <label>Morada (opcional)</label>
+        <input id="morada" type="text" placeholder="Ex.: Av. 25 de Abril" />
+      </div>
+
+      <div>
+        <label>Latitude (obrigatório)</label>
+        <input id="lat" type="number" step="any" placeholder="Ex.: 39.3278539" />
+      </div>
+
+      <div>
+        <label>Longitude (obrigatório)</label>
+        <input id="lng" type="number" step="any" placeholder="Ex.: -9.3003442" />
+      </div>
+
+      <div>
+        <label>Link Google Maps (opcional)</label>
+        <input id="mapsUrl" type="url" placeholder="https://maps.app.goo.gl/..." />
+        <div class="hint">Dica: no Google Maps podes copiar o link do local.</div>
+      </div>
+
+      <div>
+        <label>Pessoas presentes (separa por vírgulas)</label>
+        <input id="pessoas" type="text" placeholder="Ex.: Sérgio Martins, Armando Mera" />
+      </div>
+
+      <div>
+        <label>Avaliação — Comida (0-5)</label>
+        <select id="comida">
+          <option value="0">0 (não preenchido)</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Avaliação — Ambiente (0-5)</label>
+        <select id="ambiente">
+          <option value="0">0 (não preenchido)</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Avaliação — Experiência (0-5)</label>
+        <select id="experiencia">
+          <option value="0">0 (não preenchido)</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Fotos (opcional) — 1 link por linha</label>
+        <textarea id="fotos" placeholder="https://...&#10;https://..."></textarea>
+      </div>
+
+      <div>
+        <label>Notas (opcional)</label>
+        <textarea id="notas" placeholder="Ex.: Jantar memorável, mesa grande, etc."></textarea>
+      </div>
+    </div>
+
+    <div style="margin-top:12px" class="row-actions">
+      <button class="btn btn-accent" id="gerar">Gerar JSON</button>
+      <button class="btn" id="copiar">Copiar</button>
+      <span id="status" class="hint"></span>
+    </div>
+  </section>
+
+  <section class="card">
+    <label>Bloco JSON gerado (colar dentro do <span class="mono">jantares.json</span>)</label>
+    <textarea id="out" class="mono" style="min-height:180px" placeholder="Clica em “Gerar JSON”…"></textarea>
+    <div class="hint">
+      Como usar: abre <span class="mono">jantares.json</span> no GitHub → cola este bloco como novo item na lista (com vírgula).
+      Se quiseres, eu no próximo passo faço o mapa ler automaticamente este ficheiro e numerar por data.
+    </div>
+  </section>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  function setStatus(msg, kind="hint"){
+    const el = $("status");
+    el.className = kind === "ok" ? "ok" : kind === "err" ? "err" : "hint";
+    el.textContent = msg;
+  }
+
+  function parseFotos(text){
+    return text
+      .split("\n")
+      .map(s => s.trim())
+      .filter(Boolean);
+  }
+
+  function parsePessoas(text){
+    const parts = text.split(",").map(s => s.trim()).filter(Boolean);
+    return parts.length ? parts : ["—"];
+  }
+
+  function buildObject(){
+    const data = $("data").value.trim();
+    const cidade = $("cidade").value.trim();
+    const lat = Number($("lat").value);
+    const lng = Number($("lng").value);
+
+    if(!data) throw new Error("Falta a data.");
+    if(!cidade) throw new Error("Falta a cidade/local.");
+    if(!Number.isFinite(lat)) throw new Error("Latitude inválida.");
+    if(!Number.isFinite(lng)) throw new Error("Longitude inválida.");
+
+    return {
+      data,
+      cidade,
+      concelho: $("concelho").value.trim() || "—",
+      distrito: $("distrito").value.trim() || "—",
+      restaurante: $("restaurante").value.trim() || "—",
+      morada: $("morada").value.trim() || "—",
+      lat,
+      lng,
+      mapsUrl: $("mapsUrl").value.trim() || "",
+      pessoas: parsePessoas($("pessoas").value),
+      avaliacao: {
+        comida: Number($("comida").value),
+        ambiente: Number($("ambiente").value),
+        experiencia: Number($("experiencia").value)
+      },
+      fotos: parseFotos($("fotos").value),
+      notas: $("notas").value.trim() || ""
+    };
+  }
+
+  $("gerar").addEventListener("click", () => {
+    try{
+      const obj = buildObject();
+      const json = JSON.stringify(obj, null, 2);
+      $("out").value = json;
+      setStatus("Gerado ✅ (agora podes copiar e colar no jantares.json)", "ok");
+    }catch(e){
+      setStatus(e.message, "err");
+    }
+  });
+
+  $("copiar").addEventListener("click", async () => {
+    const text = $("out").value.trim();
+    if(!text){
+      setStatus("Nada para copiar. Clica em “Gerar JSON” primeiro.", "err");
+      return;
+    }
+    try{
+      await navigator.clipboard.writeText(text);
+      setStatus("Copiado ✅", "ok");
+    }catch{
+      // fallback
+      $("out").focus();
+      $("out").select();
+      document.execCommand("copy");
+      setStatus("Copiado ✅", "ok");
+    }
+  });
+</script>
+</body>
+</html>
