@@ -414,17 +414,19 @@
 
 // Ajuste inicial do mapa (desktop vs mobile)
 if (window.innerWidth < 768) {
-  // telemóvel → fitBounds e NÃO fazer zoom-out forçado
-  map.fitBounds(portugalBounds, { padding: [20, 20] });
+  map.fitBounds(portugalBounds, { padding: [10, 10] });
 
-  // se por algum motivo ficar longe demais, aproxima um pouco
   setTimeout(() => {
-    if (map.getZoom() < 6) map.setZoom(6);   // <- só aproxima, nunca afasta
-  }, 80);
+    // Se ficou demasiado perto no telemóvel, afasta um pouco (sem perder o enquadramento)
+    if (map.getZoom() > 6) {
+      map.setZoom(6);
+      map.fitBounds(portugalBounds, { padding: [10, 10] });
+    }
+  }, 120);
 } else {
-  // desktop
   map.fitBounds(portugalBounds, { padding: [20, 20] });
 }
+
 
 
 
