@@ -324,30 +324,32 @@
       <div class="subtitle">Mapa • Galeria • Timeline</div>
     </div>
 
-    <div class="tabs" role="tablist" aria-label="Navegação">
-      <div class="stats header-stats" id="stats">
-  <div class="stat">
-    <div class="k">Jantares</div>
-    <div class="v" id="stJantares">—</div>
-    <div class="s">Total registado</div>
-  </div>
-  <div class="stat">
-    <div class="k">Restaurantes</div>
-    <div class="v" id="stRestaurantes">—</div>
-    <div class="s">Diferentes</div>
-  </div>
-  <div class="stat">
-    <div class="k">Cidades</div>
-    <div class="v" id="stCidades">—</div>
-    <div class="s">Diferentes</div>
-  </div>
-  <div class="stat">
-    <div class="k">Melhor avaliado</div>
-    <div class="v" id="stMelhor">—</div>
-    <div class="s" id="stMelhorSub">—</div>
-  </div>
-</div>
+    <!-- 4 quadrados (stats) -->
+    <div class="stats header-stats" id="stats">
+      <div class="stat">
+        <div class="k">Jantares</div>
+        <div class="v" id="stJantares">—</div>
+        <div class="s">Total registado</div>
+      </div>
+      <div class="stat">
+        <div class="k">Restaurantes</div>
+        <div class="v" id="stRestaurantes">—</div>
+        <div class="s">Diferentes</div>
+      </div>
+      <div class="stat">
+        <div class="k">Cidades</div>
+        <div class="v" id="stCidades">—</div>
+        <div class="s">Diferentes</div>
+      </div>
+      <div class="stat">
+        <div class="k">Melhor avaliado</div>
+        <div class="v" id="stMelhor">—</div>
+        <div class="s" id="stMelhorSub">—</div>
+      </div>
+    </div>
 
+    <!-- 3 quadrados (tabs) -->
+    <div class="tabs header-tabs" role="tablist" aria-label="Navegação">
       <button class="tab active" data-tab="mapView" role="tab" aria-selected="true">Mapa</button>
       <button class="tab" data-tab="galleryView" role="tab" aria-selected="false">Galeria</button>
       <button class="tab" data-tab="timelineView" role="tab" aria-selected="false">Timeline</button>
@@ -359,6 +361,7 @@
     <button class="btn" id="btnAll">Ver Portugal + ilhas</button>
   </div>
 </header>
+
 
 <!-- MAP VIEW -->
 <section id="mapView" class="view active">
