@@ -414,20 +414,12 @@
 
 // Ajuste inicial do mapa (desktop vs mobile)
 if (window.innerWidth < 768) {
-  map.fitBounds(portugalBounds, { padding: [10, 10] });
-
-  setTimeout(() => {
-    // Se ficou demasiado perto no telemóvel, afasta um pouco (sem perder o enquadramento)
-    if (map.getZoom() > 6) {
-      map.setZoom(6);
-      map.fitBounds(portugalBounds, { padding: [10, 10] });
-    }
-  }, 120);
+  // telemóvel: vista fixa para garantir Continente + Madeira + Açores
+  map.setView([38.7, -16.5], 5);   // centro no Atlântico entre continente e Açores
 } else {
+  // desktop: encaixa nos limites
   map.fitBounds(portugalBounds, { padding: [20, 20] });
 }
-
-
 
 
   const listEl = $("list");
