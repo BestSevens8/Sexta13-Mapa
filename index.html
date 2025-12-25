@@ -415,7 +415,7 @@
 // Ajuste inicial do mapa (desktop vs mobile)
 if (window.innerWidth < 768) {
   // telemóvel: vista fixa para garantir Continente + Madeira + Açores
-  map.setView([38.7, -16.5], 3);   // centro no Atlântico entre continente e Açores
+  map.setView([38.7, -16.5], 1);   // centro no Atlântico entre continente e Açores
 } else {
   // desktop: encaixa nos limites
   map.fitBounds(portugalBounds, { padding: [20, 20] });
