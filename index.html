@@ -403,7 +403,7 @@
   const map = L.map('map', {
     maxBounds: portugalBounds,
     maxBoundsViscosity: 1.0,
-    minZoom: 6,
+    minZoom: 4,
     maxZoom: 18
   });
   window._map = map;
@@ -415,7 +415,7 @@
 // Ajuste inicial do mapa (desktop vs mobile)
 if (window.innerWidth < 768) {
   // telemóvel: vista fixa para garantir Continente + Madeira + Açores
-  map.setView([38.7, -16.5], 1);   // centro no Atlântico entre continente e Açores
+  map.setView([38.7, -16.5], 5);   // centro no Atlântico entre continente e Açores
 } else {
   // desktop: encaixa nos limites
   map.fitBounds(portugalBounds, { padding: [20, 20] });
