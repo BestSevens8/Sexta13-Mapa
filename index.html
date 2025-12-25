@@ -236,6 +236,39 @@
       #mapView main{ grid-template-columns: 1fr; grid-template-rows: 1fr 42vh; }
       aside{ border-left:none; border-top:1px solid rgba(255,255,255,.08); }
     }
+    /* Stats cards */
+.stats{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:10px;
+  margin-top: 10px;
+}
+@media (max-width: 980px){ .stats{ grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px){ .stats{ grid-template-columns: 1fr; } }
+
+.stat{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.06);
+  border-radius:16px;
+  padding:12px;
+}
+.stat .k{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:800;
+}
+.stat .v{
+  margin-top:6px;
+  font-size:18px;
+  font-weight:1000;
+  letter-spacing:.2px;
+}
+.stat .s{
+  margin-top:6px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.2;
+}
   </style>
 </head>
 
@@ -248,6 +281,29 @@
     </div>
 
     <div class="tabs" role="tablist" aria-label="Navegação">
+      <div class="stats" id="stats">
+  <div class="stat">
+    <div class="k">Jantares</div>
+    <div class="v" id="stJantares">—</div>
+    <div class="s">Total registado</div>
+  </div>
+  <div class="stat">
+    <div class="k">Restaurantes</div>
+    <div class="v" id="stRestaurantes">—</div>
+    <div class="s">Diferentes</div>
+  </div>
+  <div class="stat">
+    <div class="k">Cidades</div>
+    <div class="v" id="stCidades">—</div>
+    <div class="s">Diferentes</div>
+  </div>
+  <div class="stat">
+    <div class="k">Melhor avaliado</div>
+    <div class="v" id="stMelhor">—</div>
+    <div class="s" id="stMelhorSub">—</div>
+  </div>
+</div>
+
       <button class="tab active" data-tab="mapView" role="tab" aria-selected="true">Mapa</button>
       <button class="tab" data-tab="galleryView" role="tab" aria-selected="false">Galeria</button>
       <button class="tab" data-tab="timelineView" role="tab" aria-selected="false">Timeline</button>
@@ -496,8 +552,6 @@
     galleryEl.appendChild(card);
   });
 }
-
-
   function renderTimeline(){
     timelineEl.innerHTML = "";
     if(!entries.length){
@@ -550,6 +604,49 @@
     map.setView([e.lat, e.lng], Math.max(map.getZoom(), 13), { animate:true });
     if(openPopup && m) m.marker.openPopup();
   }
+  function renderStats(){
+  // Total
+  $("stJantares").textContent = String(entries.length);
+
+  // Restaurantes diferentes (ignora "—")
+  const restSet = new Set(
+    entries.map(e => (e.restaurante || "").trim()).filter(r => r && r !== "—")
+  );
+  $("stRestaurantes").textContent = String(restSet.size);
+
+  // Cidades diferentes (ignora "—")
+  const cidSet = new Set(
+    entries.map(e => (e.cidade || "").trim()).filter(c => c && c !== "—")
+  );
+  $("stCidades").textContent = String(cidSet.size);
+
+  // Melhor avaliado (média de comida+ambiente+experiencia, ignora 0/0/0)
+  let best = null; // { e, score }
+  entries.forEach(e => {
+    const a = e.avaliacao || {};
+    const comida = Number(a.comida || 0);
+    const ambiente = Number(a.ambiente || 0);
+    const experiencia = Number(a.experiencia || 0);
+    const sum = comida + ambiente + experiencia;
+
+    // se não tiver avaliações, ignora
+    if(sum <= 0) return;
+
+    const score = sum / 3;
+    if(!best || score > best.score) best = { e, score };
+  });
+
+  if(best){
+    $("stMelhor").textContent = `#${best.e.numero}`;
+    const nome = best.e.restaurante && best.e.restaurante !== "—"
+      ? best.e.restaurante
+      : (best.e.cidade || "Local");
+    $("stMelhorSub").textContent = `${nome} • ${best.e.data ? fmtDatePT(best.e.data) : ""} • ${best.score.toFixed(1)}/5`;
+  }else{
+    $("stMelhor").textContent = "—";
+    $("stMelhorSub").textContent = "Sem avaliações ainda";
+  }
+}
 
   async function load(){
     let data = [];
@@ -578,6 +675,8 @@
     renderMapList(entries);
     renderGallery();
     renderTimeline();
+    renderStats();
+
   }
 
   // UI events
