@@ -412,7 +412,18 @@
     attribution: '© OpenStreetMap'
   }).addTo(map);
 
-  map.fitBounds(portugalBounds, { padding: [20,20] });
+  // Ajuste inicial do mapa (desktop vs mobile)
+if (window.innerWidth < 768) {
+  // telemóvel → mais afastado para ver continente + ilhas
+  map.fitBounds(portugalBounds, { padding: [10, 10] });
+  setTimeout(() => {
+    if (map.getZoom() > 6) map.setZoom(6);
+  }, 50);
+} else {
+  // desktop
+  map.fitBounds(portugalBounds, { padding: [20, 20] });
+}
+
 
   const listEl = $("list");
   const countEl = $("count");
