@@ -277,36 +277,56 @@
   justify-content:flex-end;
 }
 
+/* Layout mobile limpo e horizontal */
 @media (max-width: 768px){
+
   header{
     flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
+    gap: 12px;
   }
 
-  .header-actions{
-    justify-content: stretch;
-  }
-
-  .header-actions .btn{
-    flex: 1 1 auto;
-    text-align:center;
-  }
-
+  /* Cartões: 2x2 */
   .header-stats{
-    margin-top: 0;
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 
   .header-stats .stat{
     padding: 10px;
+    text-align: center;
   }
 
-  /* Deixa o mapa maior no telemóvel */
+  /* Tabs ficam numa linha própria */
+  .tabs{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    width: 100%;
+  }
+
+  .tabs .tab{
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  /* Botões por baixo */
+  .header-actions{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .header-actions .btn{
+    text-align: center;
+  }
+
+  /* Mapa ganha espaço */
   #mapView main{
-    height: calc(100vh - 190px);
+    height: calc(100vh - 170px);
   }
 }
+
 
 @media (max-width: 420px){
   .header-stats{
