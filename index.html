@@ -277,36 +277,65 @@
   justify-content:flex-end;
 }
 
+/* Mobile: 4 quadrados em cima (2x2) + 3 quadrados por baixo (1x3) */
 @media (max-width: 768px){
   header{
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 12px;
   }
 
+  /* 4 stats em 2x2 */
+  .header-stats{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 0;
+  }
+  .header-stats .stat{
+    padding: 10px;
+    text-align: center;
+  }
+
+  /* Tabs viram 3 quadrados independentes (sem retângulo grande) */
+  .header-tabs{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 100%;
+    border: none;
+    background: transparent;
+    border-radius: 0;
+    overflow: visible;
+  }
+  .header-tabs .tab{
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.06);
+    border-radius: 14px;
+    padding: 12px 0;
+    text-align: center;
+  }
+  .header-tabs .tab.active{
+    background: rgba(255,255,255,.12);
+  }
+
+  /* Botões em 2 colunas */
   .header-actions{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
     justify-content: stretch;
   }
-
   .header-actions .btn{
-    flex: 1 1 auto;
     text-align:center;
   }
 
-  .header-stats{
-    margin-top: 0;
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .header-stats .stat{
-    padding: 10px;
-  }
-
-  /* Deixa o mapa maior no telemóvel */
+  /* O header ficou maior -> dá mais espaço ao mapa */
   #mapView main{
-    height: calc(100vh - 190px);
+    height: calc(100vh - 260px);
   }
 }
+
 
 @media (max-width: 420px){
   .header-stats{
