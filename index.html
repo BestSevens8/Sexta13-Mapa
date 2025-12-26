@@ -59,10 +59,13 @@
       border:none;
       background:transparent;
     }
-    .tab.active{
-      color:var(--text);
-      background:rgba(255,255,255,.12);
-    }
+    /* Tab ativa (Mapa / Galeria / Timeline) */
+.tab.active{
+  color: #ffffff;
+  background: rgba(211,47,47,.18);
+  border-color: #d32f2f;
+  transition: all .2s ease;
+}
 
     /* Views */
     .view{ display:none; }
@@ -361,6 +364,18 @@
     transform: scale(1.12);
     opacity: 0;
   }
+}
+/* Stats (1x4) – cores do texto */
+#stats .stat .k{
+  color: rgba(255,255,255,.65); /* título pequeno */
+}
+
+#stats .stat .v{
+  color: #ffffff;               /* número principal */
+}
+
+#stats .stat .s{
+  color: rgba(255,255,255,.55); /* subtítulo */
 }
 
   </style>
