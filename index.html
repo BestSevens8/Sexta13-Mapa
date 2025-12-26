@@ -365,17 +365,34 @@
     opacity: 0;
   }
 }
-/* Stats (1x4) – cores do texto */
+/* CORES INDIVIDUAIS DOS 4 QUADRADOS (1x4) */
+
+/* 1️⃣ Jantares – vermelho */
+#stats .stat:nth-child(1) .v{
+  color: #d32f2f;
+}
+
+/* 2️⃣ Restaurantes – verde */
+#stats .stat:nth-child(2) .v{
+  color: #2e7d32;
+}
+
+/* 3️⃣ Cidades – laranja */
+#stats .stat:nth-child(3) .v{
+  color: #ef6c00;
+}
+
+/* 4️⃣ Melhor avaliação – amarelo */
+#stats .stat:nth-child(4) .v{
+  color: #fbc02d;
+}
+
+/* mantém os textos pequenos neutros */
 #stats .stat .k{
-  color: rgba(255,255,255,.65); /* título pequeno */
+  color: rgba(255,255,255,.75);
 }
-
-#stats .stat .v{
-  color: #ffffff;               /* número principal */
-}
-
 #stats .stat .s{
-  color: rgba(255,255,255,.55); /* subtítulo */
+  color: rgba(255,255,255,.55);
 }
 
   </style>
