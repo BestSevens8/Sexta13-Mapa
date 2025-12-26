@@ -834,6 +834,7 @@ if (window.innerWidth < 768) {
     $("stMelhor").textContent = "—";
     $("stMelhorSub").textContent = "Sem avaliações ainda";
   }
+    bestEntry = best ? best.e : null;
 }
 
   async function load(){
@@ -864,6 +865,31 @@ if (window.innerWidth < 768) {
     renderGallery();
     renderTimeline();
     renderStats();
+    // Cliques nos quadrados (stats)
+document.querySelectorAll("#stats .stat").forEach(stat => {
+  stat.addEventListener("click", () => {
+    const filter = stat.dataset.filter;
+
+    // remover destaque visual
+    document.querySelectorAll("#stats .stat")
+      .forEach(s => s.classList.remove("active"));
+
+    // marcar ativo
+    stat.classList.add("active");
+
+    if (filter === "best") {
+      if (!bestEntry) return;
+      setTab("mapView");
+      setTimeout(() => focusEntry(bestEntry, true), 80);
+      return;
+    }
+
+    quickFilter = filter;
+    setTab("mapView");
+    applyFilter();
+  });
+});
+
 
   }
 let activeQuickFilter = "all";
