@@ -444,6 +444,25 @@ header .left{
     max-width: 70px;
   }
 }
+    /* Logo pequeno entra com efeito de recolher */
+.header-logo{
+  height: 44px;
+  max-width: 90px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity .6s ease, transform .6s ease;
+}
+
+/* Quando ativo */
+.header-logo.show{
+  opacity: 1;
+  transform: scale(1);
+}
+
 
 
 
@@ -555,20 +574,28 @@ header .left{
 </section>
 
 <script>
-  // Splash screen com zoom (10s)
+  // Splash screen com transição para o logo do header
 (() => {
   const splash = document.getElementById("splash");
+  const headerLogo = document.querySelector(".header-logo");
+
   if (!splash) return;
 
-  // mostra sempre (se quiseres só 1x por sessão, diz)
-  const total = 3000; // 3 segundos
-  const outMs = 700;
+  const total = 3000;   // duração total do splash
+  const outMs = 700;    // duração da animação de saída
 
   setTimeout(() => {
     splash.classList.add("out");
+
+    // mostrar o logo pequeno quase ao mesmo tempo
+    setTimeout(() => {
+      if (headerLogo) headerLogo.classList.add("show");
+    }, outMs - 200);
+
     setTimeout(() => splash.remove(), outMs);
   }, total - outMs);
 })();
+
 
   // Mostrar botão "Novo Jantar" só em modo admin (?admin=1)
   (() => {
