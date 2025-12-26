@@ -864,14 +864,42 @@ if (window.innerWidth < 768) {
 
   renderMapList(filtered);
 }
+  function centerMarkerSmart(lat, lng, zoom = 13, openPopupFn = null){
+  const latlng = L.latLng(lat, lng);
+
+  map.setView(latlng, Math.max(map.getZoom(), zoom), { animate: true });
+
+  // Depois do mapa mexer, ajusta o "centro visual"
+  setTimeout(() => {
+    // Desktop: compensar a sidebar (lista à direita)
+    if (window.innerWidth >= 768) {
+      const side = document.getElementById("sidePanel") || document.querySelector("aside");
+      if (side) {
+        const w = side.getBoundingClientRect().width || 0;
+        if (w > 0) map.panBy([-(w/2), 0], { animate: true }); // puxa para a esquerda
+      }
+    } else {
+      // Mobile: compensar o painel em baixo (lista)
+      const side = document.getElementById("sidePanel") || document.querySelector("aside");
+      if (side) {
+        const h = side.getBoundingClientRect().height || 0;
+        if (h > 0) map.panBy([0, -(h/3)], { animate: true }); // puxa para cima
+      }
+    }
+
+    if (typeof openPopupFn === "function") openPopupFn();
+  }, 220);
+}
+
 
 
   function focusEntry(e, openPopup){
-    // encontra marker correspondente (se já renderizado)
-    const m = markers.find(x => x.entry === e);
-    map.setView([e.lat, e.lng], Math.max(map.getZoom(), 13), { animate:true });
-    if(openPopup && m) m.marker.openPopup();
-  }
+  const m = markers.find(x => x.entry === e);
+  centerMarkerSmart(e.lat, e.lng, 13, () => {
+    if (openPopup && m) m.marker.openPopup();
+  });
+}
+
   function renderStats(){
   // Total
   $("stJantares").textContent = String(entries.length);
