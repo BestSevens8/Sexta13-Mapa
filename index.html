@@ -469,7 +469,7 @@
 <section id="mapView" class="view active">
   <main>
     <div id="map"></div>
-    <aside>
+    <aside id="sidePanel">
       <div class="aside-header">
         <h2>Jantares</h2>
         <div class="count" id="count">—</div>
@@ -872,16 +872,16 @@ renderGallery();
 renderTimeline();
 renderStats();
 
-// 👇 COLA AQUI (logo a seguir)
+// Cliques nos quadrados (stats)
 document.querySelectorAll("#stats .stat").forEach(stat => {
   stat.addEventListener("click", () => {
     const filter = stat.dataset.filter;
 
-    document.querySelectorAll("#stats .stat")
-      .forEach(s => s.classList.remove("active"));
-
+    // destaque visual
+    document.querySelectorAll("#stats .stat").forEach(s => s.classList.remove("active"));
     stat.classList.add("active");
 
+    // Melhor avaliado
     if (filter === "best") {
       if (!bestEntry) return;
       setTab("mapView");
@@ -889,11 +889,21 @@ document.querySelectorAll("#stats .stat").forEach(stat => {
       return;
     }
 
-    quickFilter = filter;
+    // Aplica filtro e mostra mapa
+    quickFilter = filter; // all | restaurants | cities
     setTab("mapView");
     applyFilter();
+
+    // Se for "Jantares", trazer a lista para a vista (mobile)
+    if (filter === "all") {
+      setTimeout(() => {
+        const panel = document.getElementById("sidePanel");
+        if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 200);
+    }
   });
 });
+
 
 
   }
