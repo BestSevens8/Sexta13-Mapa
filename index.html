@@ -405,23 +405,38 @@
   border-color: rgba(211,47,47,.85);
   box-shadow: 0 0 0 1px rgba(211,47,47,.35) inset;
 }
-    /* LOGO PEQUENO NO HEADER */
+    /* Header layout */
+header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Lado esquerdo: logo + texto */
+header .left{
+  display: flex;
+  align-items: center;
+  gap: 12px; /* espaço entre logo e texto */
+}
+
+/* Logo no header */
 .header-logo{
-  height: 44px;        /* mantém a altura que gostas */
-  max-width: 120px;    /* LIMITA a largura */
+  height: 44px;
+  max-width: 90px;   /* controla a largura */
   width: auto;
   object-fit: contain;
   opacity: .9;
   flex-shrink: 0;
 }
 
-
+/* Mobile */
 @media (max-width: 600px){
   .header-logo{
     height: 34px;
-    max-width: 90px;
+    max-width: 70px;
   }
 }
+
 
 
 
@@ -440,13 +455,15 @@
 
 <header>
   <div class="left">
+    <img src="logo.png" alt="Logo Saga-Feira 13" class="header-logo">
+
     <div>
       <div class="title">Saga-Feira 13</div>
       <div class="subtitle">Mapa • Galeria • Timeline</div>
     </div>
-    <!-- LOGO PEQUENO -->
-  <img src="logo.png" alt="Logo Saga-Feira 13" class="header-logo">
-</hea
+  </div>
+</header>
+
 
     <!-- 4 quadrados (stats) -->
     <div class="stats header-stats" id="stats">
