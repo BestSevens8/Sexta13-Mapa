@@ -279,36 +279,40 @@
 
 @media (max-width: 768px){
 
-  /* Nunca permitir scroll horizontal no topo */
-  header{
-    overflow-x: hidden;
-  }
+  /* impede qualquer scroll lateral da página */
+  html, body { overflow-x: hidden; }
 
-  /* Stats: 4 na linha, mas SEM esticar a largura do header */
+  /* header ocupa a largura e não empurra para fora */
+  header { width: 100%; }
+
+  /* mantém o teu 1x4 */
   #stats.header-stats{
-    overflow-x: hidden !important;     /* não cria scroll horizontal */
-    flex-wrap: nowrap;
+    display:flex !important;
+    flex-direction:row !important;
+    gap:10px;
     width: 100%;
+    overflow-x: hidden;      /* importante: sem scroll lateral */
   }
 
   #stats.header-stats .stat{
-    flex: 1 1 0 !important;            /* divide o espaço igualmente */
-    max-width: none !important;
-    min-width: 0;                      /* evita empurrar para fora */
+    flex: 0 0 23%;
+    max-width: 23%;
+    min-width: 0;
+    text-align:center;
   }
 
-  /* Botões: sempre visíveis, 2 colunas */
+  /* botões SEMPRE visíveis (2 colunas) */
   .header-actions{
-    display: grid !important;
+    display:grid !important;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    width: 100%;
+    gap:8px;
+    width:100%;
   }
-
   .header-actions .btn{
-    width: 100%;
+    width:100%;
   }
 }
+
 
 
   </style>
@@ -355,7 +359,7 @@
   </div>
 
   <div class="right header-actions">
-    <a class="btn" href="./editor.html">+ Novo Jantar (Editor)</a>
+    <a class="btn" id="adminBtn" href="./editor.html">+ Novo Jantar (Editor)</a>
     <button class="btn" id="btnAll">Ver Portugal + ilhas</button>
   </div>
 </header>
@@ -404,6 +408,13 @@
 </section>
 
 <script>
+  // Mostrar botão "Novo Jantar" só em modo admin (?admin=1)
+  (() => {
+    const params = new URLSearchParams(window.location.search);
+    const isAdmin = params.get("admin") === "1";
+    const btn = document.getElementById("adminBtn");
+    if (btn && !isAdmin) btn.style.display = "none";
+  })();
   const $ = (id) => document.getElementById(id);
 
   function escapeHtml(s) {
