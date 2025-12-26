@@ -394,6 +394,11 @@
 #stats .stat .s{
   color: rgba(255,255,255,.55);
 }
+/* Stat ativo (quando está a filtrar) */
+#stats .stat.is-active{
+  border-color: rgba(211,47,47,.85);
+  box-shadow: 0 0 0 1px rgba(211,47,47,.35) inset;
+}
 
   </style>
 </head>
@@ -417,22 +422,22 @@
 
     <!-- 4 quadrados (stats) -->
     <div class="stats header-stats" id="stats">
-      <div class="stat">
+      <div class="stat" data-filter="all">
         <div class="k">Jantares</div>
         <div class="v" id="stJantares">—</div>
         <div class="s">Total registado</div>
       </div>
-      <div class="stat">
+      <div class="stat" data-filter="restaurants">
         <div class="k">Restaurantes</div>
         <div class="v" id="stRestaurantes">—</div>
         <div class="s">Diferentes</div>
       </div>
-      <div class="stat">
+      <div class="stat" data-filter="cities">
         <div class="k">Cidades</div>
         <div class="v" id="stCidades">—</div>
         <div class="s">Diferentes</div>
       </div>
-      <div class="stat">
+      <div class="stat" data-filter="best">
         <div class="k">Melhor avaliado</div>
         <div class="v" id="stMelhor">—</div>
         <div class="s" id="stMelhorSub">—</div>
@@ -593,6 +598,8 @@ if (window.innerWidth < 768) {
   const timelineEmpty = $("timelineEmpty");
 
   let entries = [];  // dados + numeração
+  let quickFilter = "all";  // all | hasRestaurant | hasCity
+  let bestEntry = null;
   let markers = [];  // { entry, marker, li }
 
   function makeNumberIcon(n){
@@ -750,21 +757,34 @@ if (window.innerWidth < 768) {
   }
 
   function applyFilter(){
-    const q = searchEl.value.trim().toLowerCase();
-    if(!q){
-      renderMapList(entries);
-      return;
-    }
-    const filtered = entries.filter(e => {
-      const hay = [
-        e.data, e.cidade, e.concelho, e.distrito, e.restaurante, e.morada,
-        (e.pessoas||[]).join(" "),
-        e.notas
-      ].filter(Boolean).join(" ").toLowerCase();
-      return hay.includes(q);
-    });
-    renderMapList(filtered);
+  const q = searchEl.value.trim().toLowerCase();
+
+  // 1) filtro rápido pelos quadrados
+  let base = entries;
+  if (quickFilter === "hasRestaurant") {
+    base = entries.filter(e => (e.restaurante || "").trim() && (e.restaurante || "").trim() !== "—");
+  } else if (quickFilter === "hasCity") {
+    base = entries.filter(e => (e.cidade || "").trim() && (e.cidade || "").trim() !== "—");
   }
+
+  // 2) filtro normal da pesquisa
+  if(!q){
+    renderMapList(base);
+    return;
+  }
+
+  const filtered = base.filter(e => {
+    const hay = [
+      e.data, e.cidade, e.concelho, e.distrito, e.restaurante, e.morada,
+      (e.pessoas||[]).join(" "),
+      e.notas
+    ].filter(Boolean).join(" ").toLowerCase();
+    return hay.includes(q);
+  });
+
+  renderMapList(filtered);
+}
+
 
   function focusEntry(e, openPopup){
     // encontra marker correspondente (se já renderizado)
@@ -846,6 +866,86 @@ if (window.innerWidth < 768) {
     renderStats();
 
   }
+let activeQuickFilter = "all";
+
+function setActiveStat(filter){
+  document.querySelectorAll("#stats .stat").forEach(el => {
+    el.classList.toggle("is-active", el.dataset.filter === filter && filter !== "all");
+  });
+}
+
+function uniqueByKeyMostRecent(arr, keyFn){
+  // devolve 1 item por chave (o mais recente pela data já ordenada)
+  const seen = new Set();
+  const out = [];
+  for (let i = arr.length - 1; i >= 0; i--) { // do fim (mais recente) para o início
+    const k = keyFn(arr[i]);
+    if (!k || seen.has(k)) continue;
+    seen.add(k);
+    out.push(arr[i]);
+  }
+  // volta a ordenar cronologicamente (opcional)
+  out.sort((a,b) => a._t - b._t || a._idx - b._idx);
+  return out;
+}
+
+function applyQuickFilter(filter){
+  // toggle: se clicar no mesmo, volta a "all"
+  if (activeQuickFilter === filter) filter = "all";
+  activeQuickFilter = filter;
+
+  setTab("mapView"); // garante que estamos no mapa
+  setActiveStat(filter);
+
+  if (filter === "all") {
+    renderMapList(entries);
+    return;
+  }
+
+  if (filter === "restaurants") {
+    const filtered = entries.filter(e => (e.restaurante || "").trim() && e.restaurante !== "—");
+    renderMapList(filtered);
+    return;
+  }
+
+  if (filter === "cities") {
+    const filtered = uniqueByKeyMostRecent(entries, e => (e.cidade || "").trim().toLowerCase());
+    renderMapList(filtered);
+    return;
+  }
+
+  if (filter === "best") {
+    const rated = entries.filter(e => {
+      const a = e.avaliacao || {};
+      return (Number(a.comida||0) + Number(a.ambiente||0) + Number(a.experiencia||0)) > 0;
+    });
+
+    renderMapList(rated);
+
+    // foca o melhor
+    let best = null;
+    rated.forEach(e => {
+      const a = e.avaliacao || {};
+      const score = (Number(a.comida||0) + Number(a.ambiente||0) + Number(a.experiencia||0)) / 3;
+      if (!best || score > best.score) best = { e, score };
+    });
+
+    if (best) {
+      setTimeout(() => focusEntry(best.e, true), 80);
+    }
+    return;
+  }
+}
+
+function wireStatClicks(){
+  const stats = document.getElementById("stats");
+  if (!stats) return;
+
+  stats.querySelectorAll(".stat[data-filter]").forEach(card => {
+    card.style.cursor = "pointer";
+    card.addEventListener("click", () => applyQuickFilter(card.dataset.filter));
+  });
+}
 
   // UI events
   searchEl.addEventListener("input", applyFilter);
