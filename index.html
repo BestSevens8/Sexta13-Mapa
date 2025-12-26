@@ -469,8 +469,7 @@
 <section id="mapView" class="view active">
   <main>
     <div id="map"></div>
-    <aside id="sidePanel">
-
+    <aside>
       <div class="aside-header">
         <h2>Jantares</h2>
         <div class="count" id="count">—</div>
@@ -893,16 +892,8 @@ document.querySelectorAll("#stats .stat").forEach(stat => {
     quickFilter = filter;
     setTab("mapView");
     applyFilter();
-
-    // Se for "Jantares", trazer a lista para a vista (mobile)
-    if (filter === "all") {
-      setTimeout(() => {
-        const panel = document.getElementById("sidePanel");
-        if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 120);
-    }
-
-
+  });
+});
 
 
   }
