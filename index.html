@@ -277,33 +277,39 @@
   justify-content:flex-end;
 }
 
-/* Mobile: 4 quadrados em cima (2x2) + 3 quadrados por baixo (1x3) */
 @media (max-width: 768px){
 
-  /* STATS em 1x4 com scroll horizontal */
-  #stats{
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 10px;
-    overflow-x: auto;
-    padding-bottom: 6px;
+  /* Nunca permitir scroll horizontal no topo */
+  header{
+    overflow-x: hidden;
   }
 
-  #stats .stat{
-    flex: 0 0 23%;   /* largura de cada quadrado */
-    max-width: 23%;
-    text-align: center;
+  /* Stats: 4 na linha, mas SEM esticar a largura do header */
+  #stats.header-stats{
+    overflow-x: hidden !important;     /* não cria scroll horizontal */
+    flex-wrap: nowrap;
+    width: 100%;
   }
 
-  /* remove scroll feio */
-  #stats::-webkit-scrollbar{
-    display: none;
-  }
-  #stats{
-    scrollbar-width: none;
+  #stats.header-stats .stat{
+    flex: 1 1 0 !important;            /* divide o espaço igualmente */
+    max-width: none !important;
+    min-width: 0;                      /* evita empurrar para fora */
   }
 
+  /* Botões: sempre visíveis, 2 colunas */
+  .header-actions{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .header-actions .btn{
+    width: 100%;
+  }
 }
+
 
   </style>
 </head>
