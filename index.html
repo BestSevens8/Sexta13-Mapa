@@ -9,6 +9,12 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
+    #stats .stat{ cursor: pointer; }
+#stats .stat.active{
+  outline: 2px solid rgba(255,255,255,.35);
+  background: rgba(255,255,255,.10);
+}
+
     :root{
       --bg:#0b0c10;
       --panel:#11131a;
@@ -862,19 +868,18 @@ if (window.innerWidth < 768) {
     entries = cleaned;
 
     renderMapList(entries);
-    renderGallery();
-    renderTimeline();
-    renderStats();
-    // Cliques nos quadrados (stats)
+renderGallery();
+renderTimeline();
+renderStats();
+
+// 👇 COLA AQUI (logo a seguir)
 document.querySelectorAll("#stats .stat").forEach(stat => {
   stat.addEventListener("click", () => {
     const filter = stat.dataset.filter;
 
-    // remover destaque visual
     document.querySelectorAll("#stats .stat")
       .forEach(s => s.classList.remove("active"));
 
-    // marcar ativo
     stat.classList.add("active");
 
     if (filter === "best") {
