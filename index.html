@@ -312,17 +312,66 @@
     width:100%;
   }
 }
+/* SPLASH SCREEN */
+#splash{
+  position: fixed;
+  inset: 0;
+  background: #0b0c10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
 
+#splash .wrap{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  transform: scale(0.85);
+  opacity: 0;
+  animation: splashIn 700ms ease-out forwards;
+}
 
+#splash img{
+  max-width: min(420px, 72vw);
+  max-height: 55vh;
+}
+
+#splash .txt{
+  font-weight: 1000;
+  letter-spacing: .4px;
+  color: rgba(255,255,255,.88);
+  font-size: 14px;
+}
+
+#splash.out .wrap{
+  animation: splashOut 650ms ease-in forwards;
+}
+
+@keyframes splashIn{
+  to{
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes splashOut{
+  to{
+    transform: scale(1.12);
+    opacity: 0;
+  }
+}
 
   </style>
 </head>
 
 <body>
-  <!-- Splash screen -->
+
+<!-- Splash screen -->
 <div id="splash">
   <div class="wrap">
-    <img src="log.png" alt="Sexta-Feira 13">
+    <img src="logo.png" alt="Sexta-Feira 13">
     <div class="txt">Sexta-Feira 13</div>
   </div>
 </div>
@@ -416,6 +465,21 @@
 </section>
 
 <script>
+  // Splash screen com zoom (10s)
+(() => {
+  const splash = document.getElementById("splash");
+  if (!splash) return;
+
+  // mostra sempre (se quiseres só 1x por sessão, diz)
+  const total = 10000;
+  const outMs = 700;
+
+  setTimeout(() => {
+    splash.classList.add("out");
+    setTimeout(() => splash.remove(), outMs);
+  }, total - outMs);
+})();
+
   // Mostrar botão "Novo Jantar" só em modo admin (?admin=1)
   (() => {
     const params = new URLSearchParams(window.location.search);
