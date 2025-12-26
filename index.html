@@ -418,6 +418,14 @@ header .left{
   align-items: center;
   gap: 12px; /* espaço entre logo e texto */
 }
+    /* Logo à frente do título (não em cima) */
+header .left{
+  display: flex;
+  flex-direction: row;   /* 👈 ISTO resolve */
+  align-items: center;
+  gap: 12px;
+}
+
 
 /* Logo no header */
 .header-logo{
