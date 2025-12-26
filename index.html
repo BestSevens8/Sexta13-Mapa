@@ -405,6 +405,21 @@
   border-color: rgba(211,47,47,.85);
   box-shadow: 0 0 0 1px rgba(211,47,47,.35) inset;
 }
+    /* LOGO PEQUENO NO HEADER */
+.header-logo{
+  height: 44px;
+  width: auto;
+  opacity: .9;
+  flex-shrink: 0;
+}
+
+/* Ajuste no telemóvel */
+@media (max-width: 600px){
+  .header-logo{
+    height: 34px;
+  }
+}
+
 
   </style>
 </head>
@@ -425,6 +440,9 @@
       <div class="title">Saga-Feira 13</div>
       <div class="subtitle">Mapa • Galeria • Timeline</div>
     </div>
+    <!-- LOGO PEQUENO -->
+  <img src="logo.png" alt="Logo Saga-Feira 13" class="header-logo">
+</hea
 
     <!-- 4 quadrados (stats) -->
     <div class="stats header-stats" id="stats">
